@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "schemaVersion": "1.0",
+    "importType": "LEX",
+    "importFormat": "JSON"
+  },
+  "resource": {
+    "name": "PromiseToPay",
+    "version": "5",
+    "intents": [
+      {
+        "name": "InstallmentPayment",
+        "version": "6",
+        "fulfillmentActivity": {
+          "type": "ReturnIntent"
+        },
+        "sampleUtterances": [
+          "Installments"
+        ],
+        "slots": [
+          {
+            "name": "agreement",
+            "slotConstraint": "Required",
+            "slotType": "agreementType",
+            "slotTypeVersion": "1",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "You need to pay in {noOfInstallments} installments {paymentFrequency} starting from {paymentDate}."
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\",\"genericAttachments\":[{\"subTitle\":\"Please select\",\"title\":\"Do you agree?\",\"buttons\":[{\"text\":\"Agree\",\"value\":\"Agree\"},{\"text\":\"Disagree\",\"value\":\"Disagree\"}]}]}"
+            },
+            "priority": 4,
+            "sampleUtterances": []
+          },
+          {
+            "name": "noOfInstallments",
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.NUMBER",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "I can help you with a schedule. How many installments you want for paying overdue amount Rs. 60,000? [min 2 - max 6]"
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 1,
+            "sampleUtterances": []
+          },
+          {
+            "name": "paymentDate",
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.DATE",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "As per policy, you have to make the payment within 7 days. When can you pay the first installment? [Example: 15 July / Coming Sunday / Tomorrow]"
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 3,
+            "sampleUtterances": []
+          },
+          {
+            "name": "paymentFrequency",
+            "slotConstraint": "Required",
+            "slotType": "paymentFrequencyType",
+            "slotTypeVersion": "1",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the frequency of paying installments?"
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\",\"genericAttachments\":[{\"imageUrl\":\"http://www.calculatehours.com/images/icon-100-bi-monthly.gif\",\"subTitle\":\"Please select\",\"title\":\"Payment Frequency\",\"buttons\":[{\"text\":\"Weekly\",\"value\":\"Weekly\"},{\"text\":\"Bi-monthly\",\"value\":\"Bi-monthly\"}]}]}"
+            },
+            "priority": 2,
+            "sampleUtterances": []
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:817866188589:function:promiseToPayBotFunctions",
+          "messageVersion": "1.0"
+        }
+      },
+      {
+        "name": "OneTimePayment",
+        "version": "6",
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:817866188589:function:promiseToPayBotFunctions",
+            "messageVersion": "1.0"
+          }
+        },
+        "sampleUtterances": [
+          "One Time Payment",
+          "one",
+          "once",
+          "All",
+          "together"
+        ],
+        "slots": [
+          {
+            "name": "paymentDate",
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.DATE",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "As per policy, you have to make the payment within 7 days. When can you pay? [Example: 15 July / Coming Sunday / Tomorrow]"
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 1,
+            "sampleUtterances": [
+              "I will pay on {paymentDate}"
+            ]
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:817866188589:function:promiseToPayBotFunctions",
+          "messageVersion": "1.0"
+        }
+      },
+      {
+        "name": "GetUserDetails",
+        "version": "8",
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:817866188589:function:promiseToPayBotFunctions",
+            "messageVersion": "1.0"
+          }
+        },
+        "sampleUtterances": [
+          "Hello",
+          "Hi",
+          "Good Morning",
+          "Good Afternoon",
+          "Good Evening",
+          "Hey there",
+          "Hey",
+          "Greetings",
+          "Start",
+          "Let's start"
+        ],
+        "slots": [
+          {
+            "name": "defaultReason",
+            "slotConstraint": "Required",
+            "slotType": "defaultReasonType",
+            "slotTypeVersion": "2",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Authentication completed. Mr. John, while you have been regular in payments so far, the last two installment of your loan are overdue."
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\",\"genericAttachments\":[{\"subTitle\":\"Please select\",\"title\":\"What is the reason for default?\",\"buttons\":[{\"text\":\"Medical Emergency\",\"value\":\"Medical Emergency\"},{\"text\":\"Loss of Job\",\"value\":\"Loss of Job\"},{\"text\":\"Unforeseen Expenses\",\"value\":\"Unforeseen Expenses\"},{\"text\":\"Other\",\"value\":\"Other\"}]}]}"
+            },
+            "priority": 3,
+            "sampleUtterances": []
+          },
+          {
+            "name": "otp",
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.FOUR_DIGIT_NUMBER",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "We have sent an OTP to this number. Please enter 4 digit OTP."
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 2,
+            "sampleUtterances": []
+          },
+          {
+            "name": "phone",
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.PhoneNumber",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Hello, please provide your 10 digit mobile number"
+                }
+              ],
+              "maxAttempts": 5,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 1,
+            "sampleUtterances": []
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:817866188589:function:promiseToPayBotFunctions",
+          "messageVersion": "1.0"
+        }
+      }
+    ],
+    "slotTypes": [
+      {
+        "description": "Agree Disagree options",
+        "name": "agreementType",
+        "version": "1",
+        "enumerationValues": [
+          {
+            "value": "Agree",
+            "synonyms": [
+              "agreed",
+              "yes",
+              "ok",
+              "okay"
+            ]
+          },
+          {
+            "value": "Disagree",
+            "synonyms": [
+              "Not agree",
+              "no",
+              "not ok",
+              "not okay"
+            ]
+          }
+        ],
+        "valueSelectionStrategy": "TOP_RESOLUTION"
+      },
+      {
+        "name": "paymentFrequencyType",
+        "version": "1",
+        "enumerationValues": [
+          {
+            "value": "Weekly",
+            "synonyms": [
+              "Every Week",
+              "Per Week",
+              "Every 7 Days",
+              "Per 7 Days"
+            ]
+          },
+          {
+            "value": "Bi-monthly",
+            "synonyms": [
+              "Twice a Month",
+              "Every 2 Weeks",
+              "Every 15 Days",
+              "15 Days",
+              "2 Weeks"
+            ]
+          }
+        ],
+        "valueSelectionStrategy": "TOP_RESOLUTION"
+      },
+      {
+        "description": "Type for capturing defaulter reasons",
+        "name": "defaultReasonType",
+        "version": "2",
+        "enumerationValues": [
+          {
+            "value": "Loss of Job",
+            "synonyms": [
+              "Layoff",
+              "No job",
+              "Lost job",
+              "No income",
+              "unemployed"
+            ]
+          },
+          {
+            "value": "Medical Emergency",
+            "synonyms": [
+              "Health Problem",
+              "Health Issue",
+              "Medical Issue",
+              "Hospitalization"
+            ]
+          },
+          {
+            "value": "Unforeseen Expenses",
+            "synonyms": [
+              "Unplanned expenses",
+              "High expenses",
+              "No money left"
+            ]
+          },
+          {
+            "value": "Other",
+            "synonyms": [
+              "Else",
+              "None of these",
+              "I don't want to share",
+              "Other than these"
+            ]
+          }
+        ],
+        "valueSelectionStrategy": "TOP_RESOLUTION"
+      }
+    ],
+    "voiceId": "Joanna",
+    "childDirected": false,
+    "locale": "en-US",
+    "idleSessionTTLInSeconds": 600,
+    "description": "Chatbot for Promise to Pay / Collections Flow",
+    "clarificationPrompt": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "Sorry, can you please repeat that?"
+        }
+      ],
+      "maxAttempts": 5
+    },
+    "abortStatement": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "Sorry, I could not understand. Goodbye."
+        }
+      ]
+    }
+  }
+}
